@@ -1,5 +1,6 @@
 package com.springworkshop.dealership.controller;
 
+import com.springworkshop.dealership.domain.Car;
 import com.springworkshop.dealership.service.CarService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ public class CarController {
     final String applicationName = "dealership";
 
     @GetMapping("/{carId}")
-    public String getCar(@PathVariable("carId") int carId){
+    public Car getCar(@PathVariable("carId") int carId){
         return carService.getCarById(carId);
     }
 }

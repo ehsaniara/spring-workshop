@@ -1,3 +1,7 @@
 spring:
   application:
     name: dealership
+
+logging:
+  level:
+    com.springworkshop: DEBUG
