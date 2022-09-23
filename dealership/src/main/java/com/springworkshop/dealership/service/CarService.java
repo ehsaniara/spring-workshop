@@ -1,5 +1,6 @@
 package com.springworkshop.dealership.service;
 
+import com.springworkshop.dealership.domain.Car;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -14,7 +15,7 @@ public class CarService {
         carInventory.put(2, "Ford");
     }
 
-    public String getCar(int carId){
+    public Car getCarById(int carId){
         return carInventory.get(carId);
     }
 

@@ -1,5 +1,7 @@
 package com.springworkshop.dealership.service;
 
+import com.springworkshop.dealership.domain.Car;
+import com.springworkshop.dealership.domain.CarType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +13,11 @@ class CarServiceIntegrationTest {
     private CarService carService;
 
     @Test
-    void getCarTest() {
-        Assertions.assertEquals("Tesla", carService.getCar(1));
-        Assertions.assertEquals("Ford", carService.getCar(2));
+    void getCarByIdTest() {
+        Car tesla = Car.builder().carType(CarType.NEW_CAR).id(1).name("Tesla").build();
+        Car ford = Car.builder().carType(CarType.NEW_CAR).id(2).name("Ford").build();
+
+        Assertions.assertEquals(tesla, carService.getCarById(1));
+        Assertions.assertEquals(ford, carService.getCarById(2));
     }
 }

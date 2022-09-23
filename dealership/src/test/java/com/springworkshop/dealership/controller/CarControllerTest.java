@@ -25,6 +25,6 @@ class CarControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
 
-        Mockito.verify(carService, Mockito.times(1)).getCar(1);
+        Mockito.verify(carService, Mockito.times(1)).getCarById(1);
     }
 }
