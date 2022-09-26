@@ -5,6 +5,10 @@ import com.springworkshop.dealership.domain.CarType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.IntStream;
+
 class CarServiceUnitTest {
     private final CarService carService = new CarService();
 
@@ -14,5 +18,25 @@ class CarServiceUnitTest {
         Car ford = Car.builder().carType(CarType.NEW_CAR).id(2).name("Ford").build();
         Assertions.assertEquals(tesla, carService.getCarById(1));
         Assertions.assertEquals(ford, carService.getCarById(2));
+    }
+
+    @Test
+    void getCar_singleThread_counterIncremented() {
+        IntStream.range(0, 99).forEach(i -> carService.getCarById(1));
+        Car carById = carService.getCarById(1);
+        Assertions.assertEquals(100, carById.getVisitorCounter().get());
+    }
+
+    @Test
+    void getCar_multiThread_counterIncremented() throws InterruptedException {
+        CountDownLatch cdl = new CountDownLatch(99999);
+        IntStream.range(0, 99999).forEach(i -> {
+            Thread myVisitor = new Thread(() -> carService.getCarById(1));
+            myVisitor.start();
+            cdl.countDown();
+        });
+        cdl.await();
+        Car carById = carService.getCarById(1);
+        Assertions.assertEquals(100000, carById.getVisitorCounter().get());
     }
 }

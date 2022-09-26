@@ -13,6 +13,7 @@ import java.util.Map;
 public class CarService {
     private final Map<Integer, Car> carInventory = new HashMap<>();
 
+
     public CarService() {
         Car tesla = Car.builder().carType(CarType.NEW_CAR).id(1).name("Tesla").build();
         Car ford = Car.builder().carType(CarType.NEW_CAR).id(2).name("Ford").build();
@@ -22,7 +23,9 @@ public class CarService {
 
     public Car getCarById(int carId){
         log.debug("Card ID: {}", carId);
-        return carInventory.get(carId);
+        Car result = carInventory.get(carId);
+        result.getVisitorCounter().getAndIncrement();
+        return result;
     }
 
 }
