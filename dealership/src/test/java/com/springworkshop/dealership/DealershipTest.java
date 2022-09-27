@@ -15,5 +15,8 @@ class DealershipTest {
     void mainTest() {
         Assertions.assertNotNull(applicationContext);
     }
-
+    @Test
+    public void main() {
+        Dealership.main(new String[] {});
+    }
 }

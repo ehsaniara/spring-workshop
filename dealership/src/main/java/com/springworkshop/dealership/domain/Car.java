@@ -1,14 +1,15 @@
 package com.springworkshop.dealership.domain;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-@Setter
 @Getter
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
 @EqualsAndHashCode
 public class Car {
     private int id;
