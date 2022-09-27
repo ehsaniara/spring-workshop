@@ -31,9 +31,11 @@ class CarServiceUnitTest {
     void getCar_multiThread_counterIncremented() throws InterruptedException {
         CountDownLatch cdl = new CountDownLatch(99999);
         IntStream.range(0, 99999).forEach(i -> {
-            Thread myVisitor = new Thread(() -> carService.getCarById(1));
+            Thread myVisitor = new Thread(() ->{
+                carService.getCarById(1);
+                cdl.countDown();
+            });
             myVisitor.start();
-            cdl.countDown();
         });
         cdl.await();
         Car carById = carService.getCarById(1);
