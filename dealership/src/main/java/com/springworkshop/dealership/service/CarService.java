@@ -5,27 +5,32 @@ import com.springworkshop.dealership.domain.CarType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 @Slf4j
 public class CarService {
     private final Map<Integer, Car> carInventory = new HashMap<>();
+    private final List<Integer> carVisitors = new LinkedList<>();
 
-
-    public CarService() {
-        Car tesla = Car.builder().carType(CarType.NEW_CAR).id(1).name("Tesla").build();
-        Car ford = Car.builder().carType(CarType.NEW_CAR).id(2).name("Ford").build();
-        carInventory.put(1, tesla);
-        carInventory.put(2, ford);
-    }
-
-    public Car getCarById(int carId){
+    public Optional<Car> getCarById(int carId){
         log.debug("Card ID: {}", carId);
         Car result = carInventory.get(carId);
-        result.getVisitorCounter().getAndIncrement();
-        return result;
+        if (result == null) {
+            return Optional.empty();
+        }
+        carVisitors.add(carId);
+        return Optional.of(result);
     }
 
+    public long getCarVisitors(int carId) {
+        return carVisitors.stream().filter(id -> id.equals(carId)).count();
+    }
+
+    public void createNewCar(Car newCar) {
+        int id = carInventory.size() + 1;
+        newCar.setId(id);
+        carInventory.put(id, newCar);
+    }
 }
