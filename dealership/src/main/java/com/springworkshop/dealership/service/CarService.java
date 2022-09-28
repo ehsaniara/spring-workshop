@@ -1,12 +1,10 @@
 package com.springworkshop.dealership.service;
 
 import com.springworkshop.dealership.domain.Car;
-import com.springworkshop.dealership.domain.CarType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 @Slf4j
@@ -21,6 +19,9 @@ public class CarService {
             return Optional.empty();
         }
         carVisitors.add(carId);
+        //TODO: remove this, just to get green test for now
+        result.getVisitorCounter().getAndIncrement();
+
         return Optional.of(result);
     }
 

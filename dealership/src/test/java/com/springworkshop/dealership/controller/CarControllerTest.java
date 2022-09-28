@@ -27,7 +27,7 @@ class CarControllerTest {
     @Test
     void getCarTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/cars/{carId}", 1))
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andDo(MockMvcResultHandlers.print());
 
         Mockito.verify(carService, Mockito.times(1)).getCarById(1);

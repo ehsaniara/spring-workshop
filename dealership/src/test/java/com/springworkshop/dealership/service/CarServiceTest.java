@@ -26,14 +26,14 @@ class CarServiceTest {
     void getCarTest() {
         Car teslaExpected = Car.builder().carType(CarType.NEW_CAR).id(1).name("Tesla").build();
         Car fordExpected = Car.builder().carType(CarType.NEW_CAR).id(2).name("Ford").build();
-        Assertions.assertEquals(teslaExpected, carService.getCarById(1));
-        Assertions.assertEquals(fordExpected, carService.getCarById(2));
+        Assertions.assertEquals(teslaExpected, carService.getCarById(1).orElseThrow());
+        Assertions.assertEquals(fordExpected, carService.getCarById(2).orElseThrow());
     }
 
     @Test
     void getCar_singleThread_counterIncremented() {
         IntStream.range(0, 99).forEach(i -> carService.getCarById(1));
-        Car carById = carService.getCarById(1);
+        Car carById = carService.getCarById(1).orElseThrow();
         Assertions.assertEquals(100, carById.getVisitorCounter().get());
     }
 
@@ -41,14 +41,14 @@ class CarServiceTest {
     void getCar_multiThread_counterIncremented() throws InterruptedException {
         CountDownLatch cdl = new CountDownLatch(99999);
         IntStream.range(0, 99999).forEach(i -> {
-            Thread myVisitor = new Thread(() ->{
+            Thread myVisitor = new Thread(() -> {
                 carService.getCarById(1);
                 cdl.countDown();
             });
             myVisitor.start();
         });
         cdl.await();
-        Car carById = carService.getCarById(1);
+        Car carById = carService.getCarById(1).orElseThrow();
         Assertions.assertEquals(100000, carById.getVisitorCounter().get());
     }
 
@@ -56,14 +56,14 @@ class CarServiceTest {
     void getCar_multiThread_pool_threadExecutor_counterIncremented() throws InterruptedException {
         ExecutorService executorService = Executors.newFixedThreadPool(100);
         IntStream.range(0, 99999).forEach(i -> {
-            executorService.execute(new Thread(() ->{
+            executorService.execute(new Thread(() -> {
                 carService.getCarById(1);
             }));
         });
         executorService.shutdown();
         boolean terminated = executorService.awaitTermination(10, TimeUnit.SECONDS);
         Assertions.assertTrue(terminated);
-        Car carById = carService.getCarById(1);
+        Car carById = carService.getCarById(1).orElseThrow();
         Assertions.assertEquals(100000, carById.getVisitorCounter().get());
     }
 
@@ -77,7 +77,7 @@ class CarServiceTest {
             }));
         });
         executorService.invokeAll(callables);
-        Car carById = carService.getCarById(1);
+        Car carById = carService.getCarById(1).orElseThrow();
         Assertions.assertEquals(100000, carById.getVisitorCounter().get());
     }
 
@@ -86,6 +86,6 @@ class CarServiceTest {
         Car toyota = Car.builder().carType(CarType.NEW_CAR).name("Toyota").build();
         carService.createNewCar(toyota);
         Car toyotaExpected = Car.builder().carType(CarType.NEW_CAR).id(3).name("Toyota").build();
-        Assertions.assertEquals(toyotaExpected, carService.getCarById(3));
+        Assertions.assertEquals(toyotaExpected, carService.getCarById(3).orElseThrow());
     }
 }
