@@ -31,6 +31,11 @@ class CarServiceTest {
     }
 
     @Test
+    void getCarTest_notExist() {
+        Assertions.assertTrue(carService.getCarById(3).isEmpty());
+    }
+
+    @Test
     void getCar_singleThread_counterIncremented() {
         IntStream.range(0, 99).forEach(i -> carService.getCarById(1));
         Assertions.assertEquals(99, carService.getCarVisitors(1));
