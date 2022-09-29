@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.Optional;
 @WebMvcTest(CarController.class)
 class CarControllerTest {
     @Autowired
@@ -25,14 +26,26 @@ class CarControllerTest {
 
 
     @Test
-    void getCarTest() throws Exception {
+    void getCarTest_200() throws Exception {
+        Car tesla = Car.builder().name("Tesla").carType(CarType.NEW_CAR).id(1).build();
+        Mockito.when(carService.getCarById(Mockito.anyInt())).thenReturn(Optional.of(tesla));
+        mockMvc.perform(MockMvcRequestBuilders.get("/cars/{carId}", 1))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Tesla"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.carType").value("NEW_CAR"))
+                .andDo(MockMvcResultHandlers.print());
+
+        Mockito.verify(carService, Mockito.times(1)).getCarById(1);
+    }
+    @Test
+    void getCarTest_404() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/cars/{carId}", 1))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andDo(MockMvcResultHandlers.print());
 
         Mockito.verify(carService, Mockito.times(1)).getCarById(1);
     }
-
     @Test
     void createNewCarTest() throws Exception {
         ObjectMapper objMapper = new ObjectMapper();

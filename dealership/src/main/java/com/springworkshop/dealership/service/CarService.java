@@ -10,7 +10,7 @@ import java.util.*;
 @Slf4j
 public class CarService {
     private final Map<Integer, Car> carInventory = new HashMap<>();
-    private final List<Integer> carVisitors = new LinkedList<>();
+    private final List<Integer> carVisitors = Collections.synchronizedList(new ArrayList<>());
 
     public Optional<Car> getCarById(int carId){
         log.debug("Card ID: {}", carId);
@@ -19,8 +19,6 @@ public class CarService {
             return Optional.empty();
         }
         carVisitors.add(carId);
-        //TODO: remove this, just to get green test for now
-        result.getVisitorCounter().getAndIncrement();
 
         return Optional.of(result);
     }

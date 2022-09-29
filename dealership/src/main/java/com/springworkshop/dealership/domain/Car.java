@@ -14,7 +14,4 @@ public class Car {
     private int id;
     private String name;
     private CarType carType;
-    @Builder.Default
-    @EqualsAndHashCode.Exclude
-    private AtomicLong visitorCounter = new AtomicLong(0);
 }

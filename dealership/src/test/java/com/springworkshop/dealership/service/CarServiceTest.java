@@ -33,14 +33,14 @@ class CarServiceTest {
     @Test
     void getCar_singleThread_counterIncremented() {
         IntStream.range(0, 99).forEach(i -> carService.getCarById(1));
-        Car carById = carService.getCarById(1).orElseThrow();
-        Assertions.assertEquals(100, carById.getVisitorCounter().get());
+        Assertions.assertEquals(99, carService.getCarVisitors(1));
     }
 
     @Test
     void getCar_multiThread_counterIncremented() throws InterruptedException {
-        CountDownLatch cdl = new CountDownLatch(99999);
-        IntStream.range(0, 99999).forEach(i -> {
+        int threadNums = 99_999;
+        CountDownLatch cdl = new CountDownLatch(threadNums);
+        IntStream.range(0, threadNums).forEach(i -> {
             Thread myVisitor = new Thread(() -> {
                 carService.getCarById(1);
                 cdl.countDown();
@@ -48,37 +48,30 @@ class CarServiceTest {
             myVisitor.start();
         });
         cdl.await();
-        Car carById = carService.getCarById(1).orElseThrow();
-        Assertions.assertEquals(100000, carById.getVisitorCounter().get());
+        Assertions.assertEquals(threadNums, carService.getCarVisitors(1));
     }
 
     @Test
     void getCar_multiThread_pool_threadExecutor_counterIncremented() throws InterruptedException {
         ExecutorService executorService = Executors.newFixedThreadPool(100);
-        IntStream.range(0, 99999).forEach(i -> {
-            executorService.execute(new Thread(() -> {
-                carService.getCarById(1);
-            }));
-        });
+        int threadNums = 99_999;
+        IntStream.range(0, threadNums).forEach(i -> executorService.execute(new Thread(() -> carService.getCarById(1))));
         executorService.shutdown();
         boolean terminated = executorService.awaitTermination(10, TimeUnit.SECONDS);
         Assertions.assertTrue(terminated);
-        Car carById = carService.getCarById(1).orElseThrow();
-        Assertions.assertEquals(100000, carById.getVisitorCounter().get());
+        Assertions.assertEquals(threadNums, carService.getCarVisitors(1));
     }
 
     @Test
     void getCar_multiThread_pool_callable_counterIncremented() throws InterruptedException {
         ExecutorService executorService = Executors.newFixedThreadPool(100);
-        List<Callable<Object>> callables = new ArrayList<>(99999);
-        IntStream.range(0, 99999).forEach(i -> {
-            callables.add(Executors.callable(() -> {
-                carService.getCarById(1);
-            }));
-        });
+        int threadNums = 99_999;
+        List<Callable<Object>> callables = new ArrayList<>(threadNums);
+        IntStream.range(0, threadNums).forEach(i -> callables.add(Executors.callable(() -> {
+            carService.getCarById(1);
+        })));
         executorService.invokeAll(callables);
-        Car carById = carService.getCarById(1).orElseThrow();
-        Assertions.assertEquals(100000, carById.getVisitorCounter().get());
+        Assertions.assertEquals(threadNums, carService.getCarVisitors(1));
     }
 
     @Test
