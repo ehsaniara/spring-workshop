@@ -2,12 +2,12 @@ package com.springworkshop.dealership.controller;
 
 import com.springworkshop.dealership.domain.Car;
 import com.springworkshop.dealership.service.CarService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("cars")
@@ -19,6 +19,18 @@ public class CarController {
 
     @GetMapping("/{carId}")
     public Car getCar(@PathVariable("carId") int carId){
-        return carService.getCarById(carId);
+        Optional<Car> result = carService.getCarById(carId);
+        if (result.isPresent()) {
+            return result.get();
+        }
+        throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "entity not found"
+        );
+    }
+
+    @PostMapping
+    @ResponseStatus( HttpStatus.CREATED )
+    public void createNewCar(@RequestBody Car newCar) {
+        carService.createNewCar(newCar);
     }
 }
