@@ -5,3 +5,8 @@ spring:
 logging:
   level:
     com.springworkshop: DEBUG
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
