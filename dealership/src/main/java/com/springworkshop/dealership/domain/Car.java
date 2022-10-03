@@ -2,7 +2,6 @@ package com.springworkshop.dealership.domain;
 
 import lombok.*;
 
-import java.util.concurrent.atomic.AtomicLong;
 
 @Setter
 @Getter
