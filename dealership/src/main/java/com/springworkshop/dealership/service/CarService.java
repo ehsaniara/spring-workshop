@@ -1,6 +1,8 @@
 package com.springworkshop.dealership.service;
 
 import com.springworkshop.dealership.domain.Car;
+import com.springworkshop.dealership.domain.CarRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -8,13 +10,15 @@ import java.util.*;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CarService {
-    private final Map<Integer, Car> carInventory = new HashMap<>();
+
+    private final CarRepository carRepository;
     private final List<Integer> carVisitors = Collections.synchronizedList(new ArrayList<>());
 
     public Optional<Car> getCarById(int carId){
         log.debug("Card ID: {}", carId);
-        Car result = carInventory.get(carId);
+        Car result = carRepository.findById(carId);
         if (result == null) {
             return Optional.empty();
         }

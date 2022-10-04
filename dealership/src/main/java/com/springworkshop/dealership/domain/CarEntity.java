@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Table(name = "cars", schema = "inventory")
 public class CarEntity {
     @Id
-    public int id;
+    public Integer id;
     @Column(length = 100)
     private String name;
     @Column(length = 20)

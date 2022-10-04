@@ -2,7 +2,7 @@ spring:
   application:
     name: dealership
   jpa:
-    show-sql: true
+
     hibernate:
       ddl-auto: none
   datasource:

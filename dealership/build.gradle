@@ -18,7 +18,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.flywaydb:flyway-core'
+    implementation 'org.mapstruct:mapstruct-processor:1.5.2.Final'
+    compileOnly 'org.mapstruct:mapstruct'
     compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.2.Final'
     annotationProcessor 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -38,6 +41,13 @@ flyway {
 
 bootRun {
     systemProperties System.properties
+    environment "DB_USERNAME", "$flyway_user"
+    environment "DB_PASSWORD", "$flyway_password"
+}
+
+test {
+    systemProperties System.properties
+    systemProperty 'Spring.profiles.active', 'test'
     environment "DB_USERNAME", "$flyway_user"
     environment "DB_PASSWORD", "$flyway_password"
 }
