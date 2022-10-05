@@ -8,6 +8,7 @@ import com.springworkshop.dealership.mapper.CarMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import java.util.stream.IntStream;
 class CarServiceTest {
 
     private final CarRepository carRepository = Mockito.mock(CarRepository.class);
-    private final CarMapper carMapper = Mockito.mock(CarMapper.class);
+    private final CarMapper carMapper = Mappers.getMapper(CarMapper.class);
     private final CarService carService = new CarService(carRepository, carMapper);
 
     Car tesla = Car.builder().carType(CarType.NEW_CAR).id(1).name("Tesla").build();
@@ -27,22 +28,11 @@ class CarServiceTest {
     Car ford = Car.builder().carType(CarType.NEW_CAR).id(2).name("Ford").build();
     CarEntity fordEntity = CarEntity.builder().carType(CarType.NEW_CAR).id(2).name("Ford").build();
 
-    Car toyotaBefore = Car.builder().carType(CarType.NEW_CAR).name("Toyota").build();
-
     @BeforeEach
     void setUp() {
         //init
-        Mockito.when(carMapper.toCarDto(teslaEntity)).thenReturn(tesla);
-        Mockito.when(carMapper.toCarDto(fordEntity)).thenReturn(ford);
-
         Mockito.when(carRepository.findById(1)).thenReturn(Optional.of(teslaEntity));
         Mockito.when(carRepository.findById(2)).thenReturn(Optional.of(fordEntity));
-//        carService.createOrUpdateCar(tesla);
-//        carService.createOrUpdateCar(ford);
-
-//        Mockito.when(carRepository.save(Mockito.any()))
-//                .thenReturn(CarEntity.builder().id(1).carType(CarType.NEW_CAR).name("Tesla").build())
-//                .thenReturn(CarEntity.builder().id(2).carType(CarType.NEW_CAR).name("Ford").build());
     }
 
     @Test
@@ -102,12 +92,10 @@ class CarServiceTest {
 
     @Test
     void createNewCar() {
-        CarEntity carEntityBefore = CarEntity.builder().carType(CarType.NEW_CAR).name("Toyota").build();
-        Mockito.when(carMapper.toCarEntity(toyotaBefore)).thenReturn(carEntityBefore);
-
         Car toyota = Car.builder().carType(CarType.NEW_CAR).name("Toyota").build();
+
         carService.createOrUpdateCar(toyota);
 
-        Mockito.verify(carRepository, Mockito.times(1)).save(carEntityBefore);
+        Mockito.verify(carRepository, Mockito.times(1)).save(Mockito.any());
     }
 }

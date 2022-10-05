@@ -13,7 +13,8 @@ import javax.persistence.*;
 @Table(name = "cars", schema = "inventory")
 public class CarEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "car_jpa_sequence_generator")
+    @SequenceGenerator(name = "car_jpa_sequence_generator", schema = "inventory", sequenceName = "car_id_seq", allocationSize = 1)
     public Integer id;
     @Column(length = 100)
     private String name;
