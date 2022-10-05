@@ -18,7 +18,7 @@ public class CarController {
     final String applicationName = "dealership";
 
     @GetMapping("/{carId}")
-    public Car getCar(@PathVariable("carId") int carId){
+    public Car getCar(@PathVariable("carId") int carId) {
         Optional<Car> result = carService.getCarById(carId);
         if (result.isPresent()) {
             return result.get();
@@ -29,8 +29,16 @@ public class CarController {
     }
 
     @PostMapping
-    @ResponseStatus( HttpStatus.CREATED )
+    @ResponseStatus(HttpStatus.CREATED)
     public void createNewCar(@RequestBody Car newCar) {
-        carService.createNewCar(newCar);
+        newCar.setId(null);
+        carService.createOrUpdateCar(newCar);
+    }
+
+    @PutMapping("/{carId}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void updateCar(@RequestBody Car newCar, @PathVariable("carId") int carId) {
+        newCar.setId(carId);
+        carService.createOrUpdateCar(newCar);
     }
 }

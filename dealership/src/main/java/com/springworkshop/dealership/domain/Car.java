@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class Car {
-    private int id;
+    private Integer id;
     private String name;
     private CarType carType;
 }

@@ -16,9 +16,9 @@ class CarServiceIntegrationTest {
     @BeforeEach
     void setUp() {
         Car tesla = Car.builder().carType(CarType.NEW_CAR).name("Tesla").build();
-        carService.createNewCar(tesla);
+        carService.createOrUpdateCar(tesla);
         Car ford = Car.builder().carType(CarType.NEW_CAR).name("Ford").build();
-        carService.createNewCar(ford);
+        carService.createOrUpdateCar(ford);
     }
 
     @Test

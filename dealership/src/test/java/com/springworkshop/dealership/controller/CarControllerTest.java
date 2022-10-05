@@ -55,6 +55,6 @@ class CarControllerTest {
                         .content(objMapper.writeValueAsString(tesla)))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andDo(MockMvcResultHandlers.print());
-        Mockito.verify(carService, Mockito.times(1)).createNewCar(tesla);
+        Mockito.verify(carService, Mockito.times(1)).createOrUpdateCar(tesla);
     }
 }

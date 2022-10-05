@@ -23,14 +23,23 @@ dependencies {
     implementation "org.mapstruct:mapstruct:1.5.2.Final"
 
     annotationProcessor 'org.projectlombok:lombok'
-    annotationProcessor "org.projectlombok:lombok-mapstruct-binding"
+    annotationProcessor "org.projectlombok:lombok-mapstruct-binding:0.2.0"
 
     runtimeOnly 'org.postgresql:postgresql'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.mapstruct:mapstruct-processor:1.5.2.Final'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+test {
+    systemProperties System.properties
+    systemProperty 'Spring.profiles.active', 'test'
+    environment "DB_USERNAME", "$flyway_user"
+    environment "DB_PASSWORD", "$flyway_password"
 }
 
 flyway {
