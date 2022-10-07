@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -26,6 +28,11 @@ public class CarController {
         throw new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "entity not found"
         );
+    }
+
+    @GetMapping
+    public List<Car> getAllCars() {
+        return carService.getAllCars();
     }
 
     @PostMapping

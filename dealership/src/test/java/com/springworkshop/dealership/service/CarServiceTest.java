@@ -98,4 +98,15 @@ class CarServiceTest {
 
         Mockito.verify(carRepository, Mockito.times(1)).save(Mockito.any());
     }
+
+    @Test
+    void getAllCars() {
+        List<CarEntity> expectedRepositoryCarList = List.of(teslaEntity, fordEntity);
+        List<Car> expectedCarList = List.of(tesla, ford);
+        Mockito.when(carRepository.findAll()).thenReturn(expectedRepositoryCarList);
+        List<Car> actualCarList = carService.getAllCars();
+
+        Assertions.assertEquals(expectedCarList, actualCarList);
+        Mockito.verify(carRepository, Mockito.times(1)).findAll();
+    }
 }

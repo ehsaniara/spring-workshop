@@ -40,4 +40,13 @@ public class CarService {
         CarEntity carEntity = carMapper.toCarEntity(newCar);
         carRepository.save(carEntity);
     }
+
+    public List<Car> getAllCars() {
+        List<Car> cars = carRepository
+                .findAll()
+                .stream()
+                .map(carMapper::toCarDto)
+                .toList();
+        return cars;
+    }
 }
