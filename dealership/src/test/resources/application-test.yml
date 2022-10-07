@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: dealership
+  flyway:
+    baseline-on-migrate: true
+server.port: 8081

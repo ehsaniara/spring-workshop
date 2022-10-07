@@ -1,33 +1,44 @@
 package com.springworkshop.dealership.service;
 
 import com.springworkshop.dealership.domain.Car;
+import com.springworkshop.dealership.domain.CarEntity;
+import com.springworkshop.dealership.domain.CarRepository;
 import com.springworkshop.dealership.domain.CarType;
+import com.springworkshop.dealership.mapper.CarMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.stream.IntStream;
 
 class CarServiceTest {
-    private final CarService carService = new CarService();
+
+    private final CarRepository carRepository = Mockito.mock(CarRepository.class);
+    private final CarMapper carMapper = Mappers.getMapper(CarMapper.class);
+    private final CarService carService = new CarService(carRepository, carMapper);
+
+    Car tesla = Car.builder().carType(CarType.NEW_CAR).id(1).name("Tesla").build();
+    CarEntity teslaEntity = CarEntity.builder().carType(CarType.NEW_CAR).id(1).name("Tesla").build();
+    Car ford = Car.builder().carType(CarType.NEW_CAR).id(2).name("Ford").build();
+    CarEntity fordEntity = CarEntity.builder().carType(CarType.NEW_CAR).id(2).name("Ford").build();
 
     @BeforeEach
     void setUp() {
-        Car tesla = Car.builder().carType(CarType.NEW_CAR).name("Tesla").build();
-        carService.createNewCar(tesla);
-        Car ford = Car.builder().carType(CarType.NEW_CAR).name("Ford").build();
-        carService.createNewCar(ford);
+        //init
+        Mockito.when(carRepository.findById(1)).thenReturn(Optional.of(teslaEntity));
+        Mockito.when(carRepository.findById(2)).thenReturn(Optional.of(fordEntity));
     }
 
     @Test
     void getCarTest() {
-        Car teslaExpected = Car.builder().carType(CarType.NEW_CAR).id(1).name("Tesla").build();
-        Car fordExpected = Car.builder().carType(CarType.NEW_CAR).id(2).name("Ford").build();
-        Assertions.assertEquals(teslaExpected, carService.getCarById(1).orElseThrow());
-        Assertions.assertEquals(fordExpected, carService.getCarById(2).orElseThrow());
+        Assertions.assertEquals(tesla, carService.getCarById(1).orElseThrow());
+        Assertions.assertEquals(ford, carService.getCarById(2).orElseThrow());
     }
 
     @Test
@@ -82,8 +93,20 @@ class CarServiceTest {
     @Test
     void createNewCar() {
         Car toyota = Car.builder().carType(CarType.NEW_CAR).name("Toyota").build();
-        carService.createNewCar(toyota);
-        Car toyotaExpected = Car.builder().carType(CarType.NEW_CAR).id(3).name("Toyota").build();
-        Assertions.assertEquals(toyotaExpected, carService.getCarById(3).orElseThrow());
+
+        carService.createOrUpdateCar(toyota);
+
+        Mockito.verify(carRepository, Mockito.times(1)).save(Mockito.any());
+    }
+
+    @Test
+    void getAllCars() {
+        List<CarEntity> expectedRepositoryCarList = List.of(teslaEntity, fordEntity);
+        List<Car> expectedCarList = List.of(tesla, ford);
+        Mockito.when(carRepository.findAll()).thenReturn(expectedRepositoryCarList);
+        List<Car> actualCarList = carService.getAllCars();
+
+        Assertions.assertEquals(expectedCarList, actualCarList);
+        Mockito.verify(carRepository, Mockito.times(1)).findAll();
     }
 }

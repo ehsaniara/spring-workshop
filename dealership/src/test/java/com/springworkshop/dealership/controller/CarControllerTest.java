@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springworkshop.dealership.domain.Car;
 import com.springworkshop.dealership.domain.CarType;
 import com.springworkshop.dealership.service.CarService;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.List;
 import java.util.Optional;
+
+
 @WebMvcTest(CarController.class)
 class CarControllerTest {
     @Autowired
@@ -55,6 +59,25 @@ class CarControllerTest {
                         .content(objMapper.writeValueAsString(tesla)))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andDo(MockMvcResultHandlers.print());
-        Mockito.verify(carService, Mockito.times(1)).createNewCar(tesla);
+        Mockito.verify(carService, Mockito.times(1)).createOrUpdateCar(tesla);
+    }
+
+    @Test
+    void getAllCars() throws Exception {
+        Car tesla = Car.builder().name("Tesla").carType(CarType.NEW_CAR).id(1).build();
+        Car ford = Car.builder().name("Ford").carType(CarType.NEW_CAR).id(2).build();
+        Mockito.when(carService.getAllCars()).thenReturn(List.of(tesla, ford));
+        mockMvc.perform(MockMvcRequestBuilders.get("/cars"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.*", Matchers.hasSize(2)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(1))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value("Tesla"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].carType").value("NEW_CAR"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].id").value(2))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].name").value("Ford"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].carType").value("NEW_CAR"))
+                .andDo(MockMvcResultHandlers.print());
+
+        Mockito.verify(carService, Mockito.times(1)).getAllCars();
     }
 }
