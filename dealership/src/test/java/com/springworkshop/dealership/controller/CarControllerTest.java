@@ -19,7 +19,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.List;
 import java.util.Optional;
 
-
 @WebMvcTest(CarController.class)
 class CarControllerTest {
     @Autowired
@@ -42,6 +41,7 @@ class CarControllerTest {
 
         Mockito.verify(carService, Mockito.times(1)).getCarById(1);
     }
+
     @Test
     void getCarTest_404() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/cars/{carId}", 1))
@@ -50,6 +50,7 @@ class CarControllerTest {
 
         Mockito.verify(carService, Mockito.times(1)).getCarById(1);
     }
+
     @Test
     void createNewCarTest() throws Exception {
         ObjectMapper objMapper = new ObjectMapper();

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -42,11 +43,9 @@ public class CarService {
     }
 
     public List<Car> getAllCars() {
-        List<Car> cars = carRepository
+        return carRepository
                 .findAll()
                 .stream()
-                .map(carMapper::toCarDto)
-                .toList();
-        return cars;
+                .map(carMapper::toCarDto).collect(Collectors.toList());
     }
 }
