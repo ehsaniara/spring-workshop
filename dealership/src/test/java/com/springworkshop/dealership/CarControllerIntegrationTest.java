@@ -1,6 +1,5 @@
-package com.springworkshop.dealership.controller;
+package com.springworkshop.dealership;
 
-import com.springworkshop.dealership.IntegrationTestBaseClass;
 import com.springworkshop.dealership.domain.Car;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
