@@ -3,6 +3,7 @@ package com.springworkshop.dealership.service;
 import com.springworkshop.dealership.domain.Car;
 import com.springworkshop.dealership.domain.CarEntity;
 import com.springworkshop.dealership.domain.CarRepository;
+import com.springworkshop.dealership.handler.CarNotFoundException;
 import com.springworkshop.dealership.mapper.CarMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,9 +37,14 @@ public class CarService {
         return carVisitors.stream().filter(id -> id.equals(carId)).count();
     }
 
-    public void createOrUpdateCar(Car newCar) {
+    public void createCar(Car newCar) {
         CarEntity carEntity = carMapper.toCarEntity(newCar);
         carRepository.save(carEntity);
+    }
+
+    public void updateCar(Car newCar) {
+         carRepository.findById(newCar.getId()).orElseThrow(CarNotFoundException::new);
+         carRepository.save(carMapper.toCarEntity(newCar));
     }
 
     public List<Car> getAllCars() {

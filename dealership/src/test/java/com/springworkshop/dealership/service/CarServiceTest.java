@@ -93,9 +93,13 @@ class CarServiceTest {
     @Test
     void createNewCar() {
         Car toyota = Car.builder().carType(CarType.NEW_CAR).name("Toyota").build();
-
-        carService.createOrUpdateCar(toyota);
-
+        carService.createCar(toyota);
+        Mockito.verify(carRepository, Mockito.times(1)).save(Mockito.any());
+    }
+    @Test
+    void updateCar() {
+        Car toyota = Car.builder().carType(CarType.NEW_CAR).name("Toyota").id(1).build();
+        carService.updateCar(toyota);
         Mockito.verify(carRepository, Mockito.times(1)).save(Mockito.any());
     }
 

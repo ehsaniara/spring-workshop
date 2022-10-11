@@ -39,13 +39,19 @@ public class CarController {
     @ResponseStatus(HttpStatus.CREATED)
     public void createNewCar(@RequestBody Car newCar) {
         newCar.setId(null);
-        carService.createOrUpdateCar(newCar);
+        carService.createCar(newCar);
     }
 
     @PutMapping("/{carId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void updateCar(@RequestBody Car newCar, @PathVariable("carId") int carId) {
         newCar.setId(carId);
-        carService.createOrUpdateCar(newCar);
+        try {
+            carService.updateCar(newCar);
+        } catch(Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, e.getMessage()
+            );
+        }
     }
 }
