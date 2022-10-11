@@ -1,5 +1,6 @@
 package com.springworkshop.dealership.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springworkshop.dealership.domain.Car;
 import com.springworkshop.dealership.domain.CarType;
@@ -59,7 +60,7 @@ class CarControllerTest {
                         .content(objMapper.writeValueAsString(tesla)))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andDo(MockMvcResultHandlers.print());
-        Mockito.verify(carService, Mockito.times(1)).createOrUpdateCar(tesla);
+        Mockito.verify(carService, Mockito.times(1)).createCar(tesla);
     }
 
     @Test
@@ -79,5 +80,19 @@ class CarControllerTest {
                 .andDo(MockMvcResultHandlers.print());
 
         Mockito.verify(carService, Mockito.times(1)).getAllCars();
+    }
+
+    @Test
+    void updateCar_202() throws Exception {
+        ObjectMapper objMapper = new ObjectMapper();
+        Car teslaUsed = Car.builder().carType(CarType.USED_CAR).name("Tesla").build();
+        int carId = 1;
+        Car teslaExpected = Car.builder().carType(CarType.USED_CAR).id(carId).name("Tesla").build();
+        mockMvc.perform(MockMvcRequestBuilders.put("/cars/{carId}", carId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objMapper.writeValueAsString(teslaUsed)))
+                .andExpect(MockMvcResultMatchers.status().isAccepted())
+                .andDo(MockMvcResultHandlers.print());
+        Mockito.verify(carService, Mockito.times(1)).updateCar(teslaExpected);
     }
 }
