@@ -25,12 +25,13 @@ class CarControllerIntegrationTest extends IntegrationTestBaseClass {
     public RestTemplate restTemplate;
 
     protected String createURLWithPort(String uri) {
-        return "http://localhost:" + port + uri;
+        return String.format("http://localhost:%d%s", port, uri);
     }
 
     @Test
     @Sql(scripts = {"/clean-up-db.sql"})
     public void getAllCarsTest_EmptyDb() {
+        assertThat(postgres.isRunning()).isTrue();
         ResponseEntity<List<Car>> response = restTemplate.exchange(createURLWithPort("/cars"),
                 HttpMethod.GET, null, new ParameterizedTypeReference<>() {
                 });
