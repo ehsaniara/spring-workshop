@@ -32,6 +32,9 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testAnnotationProcessor 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.mapstruct:mapstruct-processor:1.5.2.Final'
+
+    testImplementation "org.testcontainers:junit-jupiter:1.17.5"
+    testImplementation "org.testcontainers:postgresql:1.17.5"
 }
 
 tasks.named('test') {
