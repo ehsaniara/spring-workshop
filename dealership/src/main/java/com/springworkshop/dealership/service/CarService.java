@@ -3,6 +3,7 @@ package com.springworkshop.dealership.service;
 import com.springworkshop.dealership.domain.Car;
 import com.springworkshop.dealership.domain.CarEntity;
 import com.springworkshop.dealership.domain.CarRepository;
+import com.springworkshop.dealership.domain.CarType;
 import com.springworkshop.dealership.handler.CarNotFoundException;
 import com.springworkshop.dealership.mapper.CarMapper;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,18 @@ public class CarService {
     public void updateCar(Car newCar) {
          carRepository.findById(newCar.getId()).orElseThrow(CarNotFoundException::new);
          carRepository.save(carMapper.toCarEntity(newCar));
+    }
+
+    public void updateCar(int id, Map<String, String> carProperties) {
+        CarEntity carEntity = carRepository.findById(id).orElseThrow(CarNotFoundException::new);
+        carProperties.forEach((key, value) -> {
+            switch (key.toLowerCase()) {
+                case "name" -> carEntity.setName(value);
+                case "type" -> carEntity.setCarType(CarType.valueOf(value));
+                default -> throw new RuntimeException("Field not found");
+            }
+        });
+        carRepository.save(carEntity);
     }
 
     public void updateCarName(int id, String carName) {
