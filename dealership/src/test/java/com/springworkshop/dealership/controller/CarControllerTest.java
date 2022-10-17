@@ -95,4 +95,14 @@ class CarControllerTest {
                 .andDo(MockMvcResultHandlers.print());
         Mockito.verify(carService, Mockito.times(1)).updateCar(teslaExpected);
     }
+
+    @Test
+    void updateCarName_202() throws Exception {
+        int carId = 1;
+        String carName = "Toyota";
+        mockMvc.perform(MockMvcRequestBuilders.patch("/cars/{carId}/carName/{carName}", carId, carName))
+                .andExpect(MockMvcResultMatchers.status().isAccepted())
+                .andDo(MockMvcResultHandlers.print());
+        Mockito.verify(carService, Mockito.times(1)).updateCarName(carId, carName);
+    }
 }

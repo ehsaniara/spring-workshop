@@ -9,10 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -46,6 +43,13 @@ public class CarService {
          carRepository.findById(newCar.getId()).orElseThrow(CarNotFoundException::new);
          carRepository.save(carMapper.toCarEntity(newCar));
     }
+
+    public void updateCarName(int id, String carName) {
+        CarEntity carToModify = carRepository.findById(id).orElseThrow(CarNotFoundException::new);
+        carToModify.setName(carName);
+        carRepository.save(carToModify);
+    }
+
 
     public List<Car> getAllCars() {
         List<Car> cars = carRepository

@@ -54,4 +54,16 @@ public class CarController {
             );
         }
     }
+
+    @PatchMapping("/{carId}/carName/{carName}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void updateCarName(@PathVariable("carId") int carId, @PathVariable("carName") String carName) {
+        try {
+            carService.updateCarName(carId, carName);
+        } catch(Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, e.getMessage()
+            );
+        }
+    }
 }

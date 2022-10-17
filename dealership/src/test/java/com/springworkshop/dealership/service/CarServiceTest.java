@@ -99,8 +99,17 @@ class CarServiceTest {
     @Test
     void updateCar() {
         Car toyota = Car.builder().carType(CarType.NEW_CAR).name("Toyota").id(1).build();
+        CarEntity toyotaExpected = CarEntity.builder().carType(CarType.NEW_CAR).name("Toyota").id(1).build();
         carService.updateCar(toyota);
-        Mockito.verify(carRepository, Mockito.times(1)).save(Mockito.any());
+        Mockito.verify(carRepository, Mockito.times(1)).save(toyotaExpected);
+    }
+
+    @Test
+    void updateCarName() {
+        CarEntity toyotaExpected = CarEntity.builder().carType(CarType.NEW_CAR).name("Toyota").id(1).build();
+        carService.updateCarName(1, "Toyota");
+        Mockito.verify(carRepository, Mockito.times(1)).findById(1);
+        Mockito.verify(carRepository, Mockito.times(1)).save(toyotaExpected);
     }
 
     @Test
