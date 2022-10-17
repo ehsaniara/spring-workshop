@@ -2,5 +2,10 @@ spring:
   application:
     name: dealership
   flyway:
-    baseline-on-migrate: true
-server.port: 8081
+    enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+  sql:
+    init:
+      mode: always

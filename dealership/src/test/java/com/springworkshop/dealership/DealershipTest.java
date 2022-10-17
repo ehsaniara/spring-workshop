@@ -6,18 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 
-@SpringBootTest
-class DealershipTest {
+class DealershipTest extends IntegrationTestBaseClass {
     @Autowired
     private ApplicationContext applicationContext;
 
     @Test
     void mainTest() {
         Assertions.assertNotNull(applicationContext);
-    }
-
-    @Test
-    public void main() {
-        Dealership.main(new String[]{});
     }
 }
