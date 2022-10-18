@@ -1,11 +1,12 @@
 package com.springworkshop.dealership.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springworkshop.dealership.domain.Car;
 import com.springworkshop.dealership.domain.CarType;
+import com.springworkshop.dealership.handler.CarNotFoundException;
 import com.springworkshop.dealership.service.CarService;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 
 @WebMvcTest(CarController.class)
@@ -47,9 +47,12 @@ class CarControllerTest {
 
     @Test
     void getCarTest_404() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/cars/{carId}", 1))
+        Mockito.when(carService.getCarById(1)).thenThrow(new CarNotFoundException());
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/cars/{carId}", 1)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andDo(MockMvcResultHandlers.print());
+                .andExpect(result -> Assertions.assertTrue(result.getResolvedException() instanceof CarNotFoundException));
 
         Mockito.verify(carService, Mockito.times(1)).getCarById(1);
     }

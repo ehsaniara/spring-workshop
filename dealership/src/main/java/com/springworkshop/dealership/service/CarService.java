@@ -25,7 +25,7 @@ public class CarService {
 
     public Car getCarById(int carId) {
         log.debug("Card ID: {}", carId);
-        CarEntity result = carRepository.findById(carId).orElseThrow(CarNotFoundException::new);;
+        CarEntity result = carRepository.findById(carId).orElseThrow(CarNotFoundException::new);
         carVisitors.add(carId);
         return carMapper.toCarDto(result);
     }
@@ -40,8 +40,8 @@ public class CarService {
     }
 
     public void updateCar(Car newCar) {
-         carRepository.findById(newCar.getId()).orElseThrow(CarNotFoundException::new);
-         carRepository.save(carMapper.toCarEntity(newCar));
+        carRepository.findById(newCar.getId()).orElseThrow(CarNotFoundException::new);
+        carRepository.save(carMapper.toCarEntity(newCar));
     }
 
     public void updateCar(int id, Map<String, String> carProperties) {
