@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -43,6 +44,7 @@ class CarControllerTest {
 
         Mockito.verify(carService, Mockito.times(1)).getCarById(1);
     }
+
     @Test
     void getCarTest_404() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/cars/{carId}", 1))
@@ -51,6 +53,7 @@ class CarControllerTest {
 
         Mockito.verify(carService, Mockito.times(1)).getCarById(1);
     }
+
     @Test
     void createNewCarTest() throws Exception {
         ObjectMapper objMapper = new ObjectMapper();
@@ -94,5 +97,28 @@ class CarControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isAccepted())
                 .andDo(MockMvcResultHandlers.print());
         Mockito.verify(carService, Mockito.times(1)).updateCar(teslaExpected);
+    }
+
+    @Test
+    void updateCarName_202() throws Exception {
+        int carId = 1;
+        String carName = "Toyota";
+        mockMvc.perform(MockMvcRequestBuilders.patch("/cars/{carId}/carName/{carName}", carId, carName))
+                .andExpect(MockMvcResultMatchers.status().isAccepted())
+                .andDo(MockMvcResultHandlers.print());
+        Mockito.verify(carService, Mockito.times(1)).updateCarName(carId, carName);
+    }
+
+    @Test
+    void updateCar_withProperties_202() throws Exception {
+        int carId = 1;
+        Map<String, String> properties = Map.of("name", "Toyota");
+        ObjectMapper objMapper = new ObjectMapper();
+        mockMvc.perform(MockMvcRequestBuilders.patch("/cars/{carId}", carId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objMapper.writeValueAsString(properties)))
+                .andExpect(MockMvcResultMatchers.status().isAccepted())
+                .andDo(MockMvcResultHandlers.print());
+        Mockito.verify(carService, Mockito.times(1)).updateCar(carId, properties);
     }
 }

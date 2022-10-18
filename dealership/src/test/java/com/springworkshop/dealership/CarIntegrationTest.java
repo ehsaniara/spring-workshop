@@ -13,12 +13,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.testcontainers.shaded.com.trilead.ssh2.ChannelCondition.TIMEOUT;
 
 public class CarIntegrationTest extends IntegrationTestBaseClass {
     @Autowired
@@ -101,12 +104,57 @@ public class CarIntegrationTest extends IntegrationTestBaseClass {
         assertThat(honda.getCarType()).isEqualTo(CarType.NEW_CAR);
     }
 
+    @Test
+    @Sql(scripts = {"/clean-up-cars.sql", "/cars.sql"})
+    public void updateCarNameTest() {
+        ResponseEntity<Void> updateResponse = restTemplate.exchange(createURLWithPort("/cars/1/carName/Toyota"),
+                HttpMethod.PATCH,
+                null,
+                Void.class
+        );
+        assertThat(updateResponse).isNotNull();
+        assertThat(updateResponse.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
+
+        ResponseEntity<Car> getResponse = restTemplate.exchange(createURLWithPort("/cars/1"),
+                HttpMethod.GET, null, Car.class);
+        Assertions.assertEquals(getResponse.getStatusCode(), HttpStatus.OK);
+        Car honda = getResponse.getBody();
+        assertThat(honda).isNotNull();
+        assertThat(honda.getName()).isEqualTo("Toyota");
+        assertThat(honda.getCarType()).isEqualTo(CarType.NEW_CAR);
+    }
+
+    @Test
+    @Sql(scripts = {"/clean-up-cars.sql", "/cars.sql"})
+    public void updateCarPropertiesTest() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        ResponseEntity<Void> updateResponse = restTemplate.exchange(createURLWithPort("/cars/1"),
+                HttpMethod.PATCH,
+                new HttpEntity<>(Map.of("name", "Toyota"), headers),
+                Void.class
+        );
+        assertThat(updateResponse).isNotNull();
+        assertThat(updateResponse.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
+
+        ResponseEntity<Car> getResponse = restTemplate.exchange(createURLWithPort("/cars/1"),
+                HttpMethod.GET, null, Car.class);
+        Assertions.assertEquals(getResponse.getStatusCode(), HttpStatus.OK);
+        Car honda = getResponse.getBody();
+        assertThat(honda).isNotNull();
+        assertThat(honda.getName()).isEqualTo("Toyota");
+        assertThat(honda.getCarType()).isEqualTo(CarType.NEW_CAR);
+    }
+
     @TestConfiguration
     static class config {
         @Bean
         @Primary
         public RestTemplate restTemplate() {
-            return new RestTemplate();
+            RestTemplate restTemplate = new RestTemplate();
+            restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
+            return restTemplate;
         }
     }
 }

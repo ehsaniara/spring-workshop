@@ -3,16 +3,16 @@ package com.springworkshop.dealership.service;
 import com.springworkshop.dealership.domain.Car;
 import com.springworkshop.dealership.domain.CarEntity;
 import com.springworkshop.dealership.domain.CarRepository;
+import com.springworkshop.dealership.domain.CarType;
 import com.springworkshop.dealership.handler.CarNotFoundException;
 import com.springworkshop.dealership.mapper.CarMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ReflectionUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.lang.reflect.Field;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -47,12 +47,32 @@ public class CarService {
          carRepository.save(carMapper.toCarEntity(newCar));
     }
 
+    public void updateCar(int id, Map<String, String> carProperties) {
+        CarEntity carEntity = carRepository.findById(id).orElseThrow(CarNotFoundException::new);
+        carProperties.forEach((key, value) -> {
+            Field carEntityField = ReflectionUtils.findField(CarEntity.class, key);
+            Objects.requireNonNull(carEntityField).setAccessible(true);
+            if ("carType".equals(key)) {
+                ReflectionUtils.setField(carEntityField, carEntity, CarType.valueOf(value));
+            } else {
+                ReflectionUtils.setField(carEntityField, carEntity, value);
+            }
+        });
+        carRepository.save(carEntity);
+    }
+
+    public void updateCarName(int id, String carName) {
+        CarEntity carToModify = carRepository.findById(id).orElseThrow(CarNotFoundException::new);
+        carToModify.setName(carName);
+        carRepository.save(carToModify);
+    }
+
+
     public List<Car> getAllCars() {
-        List<Car> cars = carRepository
+        return carRepository
                 .findAll()
                 .stream()
                 .map(carMapper::toCarDto)
                 .toList();
-        return cars;
     }
 }
