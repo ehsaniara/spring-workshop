@@ -13,6 +13,7 @@ import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.stream.IntStream;
@@ -101,6 +102,13 @@ class CarServiceTest {
         Car toyota = Car.builder().carType(CarType.NEW_CAR).name("Toyota").id(1).build();
         CarEntity toyotaExpected = CarEntity.builder().carType(CarType.NEW_CAR).name("Toyota").id(1).build();
         carService.updateCar(toyota);
+        Mockito.verify(carRepository, Mockito.times(1)).save(toyotaExpected);
+    }
+
+    @Test
+    void updateCar_withProperties() {
+        CarEntity toyotaExpected = CarEntity.builder().carType(CarType.USED_CAR).name("Toyota").id(1).build();
+        carService.updateCar(1, Map.of("name", "Toyota", "carType", "USED_CAR"));
         Mockito.verify(carRepository, Mockito.times(1)).save(toyotaExpected);
     }
 

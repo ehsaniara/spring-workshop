@@ -9,7 +9,9 @@ import com.springworkshop.dealership.mapper.CarMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 @Service
@@ -48,10 +50,12 @@ public class CarService {
     public void updateCar(int id, Map<String, String> carProperties) {
         CarEntity carEntity = carRepository.findById(id).orElseThrow(CarNotFoundException::new);
         carProperties.forEach((key, value) -> {
-            switch (key.toLowerCase()) {
-                case "name" -> carEntity.setName(value);
-                case "type" -> carEntity.setCarType(CarType.valueOf(value));
-                default -> throw new RuntimeException("Field not found");
+            Field carEntityField = ReflectionUtils.findField(CarEntity.class, key);
+            Objects.requireNonNull(carEntityField).setAccessible(true);
+            if ("carType".equals(key)) {
+                ReflectionUtils.setField(carEntityField, carEntity, CarType.valueOf(value));
+            } else {
+                ReflectionUtils.setField(carEntityField, carEntity, value);
             }
         });
         carRepository.save(carEntity);
@@ -65,11 +69,10 @@ public class CarService {
 
 
     public List<Car> getAllCars() {
-        List<Car> cars = carRepository
+        return carRepository
                 .findAll()
                 .stream()
                 .map(carMapper::toCarDto)
                 .toList();
-        return cars;
     }
 }

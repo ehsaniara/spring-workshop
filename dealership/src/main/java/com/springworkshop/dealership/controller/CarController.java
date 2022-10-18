@@ -9,6 +9,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -48,6 +49,18 @@ public class CarController {
         newCar.setId(carId);
         try {
             carService.updateCar(newCar);
+        } catch(Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, e.getMessage()
+            );
+        }
+    }
+
+    @PatchMapping("/{carId}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void updateCar(@RequestBody Map<String, String> carProperties, @PathVariable("carId") int carId) {
+        try {
+            carService.updateCar(carId, carProperties);
         } catch(Exception e) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, e.getMessage()
