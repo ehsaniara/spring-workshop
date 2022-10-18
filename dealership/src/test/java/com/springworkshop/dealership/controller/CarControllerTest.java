@@ -34,7 +34,7 @@ class CarControllerTest {
     @Test
     void getCarTest_200() throws Exception {
         Car tesla = Car.builder().name("Tesla").carType(CarType.NEW_CAR).id(1).build();
-        Mockito.when(carService.getCarById(Mockito.anyInt())).thenReturn(Optional.of(tesla));
+        Mockito.when(carService.getCarById(Mockito.anyInt())).thenReturn(tesla);
         mockMvc.perform(MockMvcRequestBuilders.get("/cars/{carId}", 1))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))

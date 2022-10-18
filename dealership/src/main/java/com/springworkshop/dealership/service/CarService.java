@@ -23,14 +23,11 @@ public class CarService {
     private final CarMapper carMapper;
     private final List<Integer> carVisitors = Collections.synchronizedList(new ArrayList<>());
 
-    public Optional<Car> getCarById(int carId) {
+    public Car getCarById(int carId) {
         log.debug("Card ID: {}", carId);
-        Optional<CarEntity> carEntityOptional = carRepository.findById(carId);
-        if (carEntityOptional.isPresent()) {
-            carVisitors.add(carId);
-            return Optional.of(carMapper.toCarDto(carEntityOptional.get()));
-        }
-        return Optional.empty();
+        CarEntity result = carRepository.findById(carId).orElseThrow(CarNotFoundException::new);;
+        carVisitors.add(carId);
+        return carMapper.toCarDto(result);
     }
 
     public long getCarVisitors(int carId) {
