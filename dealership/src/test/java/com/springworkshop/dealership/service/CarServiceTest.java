@@ -4,6 +4,7 @@ import com.springworkshop.dealership.domain.Car;
 import com.springworkshop.dealership.domain.CarEntity;
 import com.springworkshop.dealership.domain.CarRepository;
 import com.springworkshop.dealership.domain.CarType;
+import com.springworkshop.dealership.handler.CarNotFoundException;
 import com.springworkshop.dealership.mapper.CarMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,13 +39,13 @@ class CarServiceTest {
 
     @Test
     void getCarTest() {
-        Assertions.assertEquals(tesla, carService.getCarById(1).orElseThrow());
-        Assertions.assertEquals(ford, carService.getCarById(2).orElseThrow());
+        Assertions.assertEquals(tesla, carService.getCarById(1));
+        Assertions.assertEquals(ford, carService.getCarById(2));
     }
 
     @Test
     void getCarTest_notExist() {
-        Assertions.assertTrue(carService.getCarById(3).isEmpty());
+        Assertions.assertThrows(CarNotFoundException.class, () -> carService.getCarById(3), "");
     }
 
     @Test

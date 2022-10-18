@@ -22,13 +22,7 @@ public class CarController {
 
     @GetMapping("/{carId}")
     public Car getCar(@PathVariable("carId") int carId) {
-        Optional<Car> result = carService.getCarById(carId);
-        if (result.isPresent()) {
-            return result.get();
-        }
-        throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "entity not found"
-        );
+        return carService.getCarById(carId);
     }
 
     @GetMapping
@@ -47,36 +41,18 @@ public class CarController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void updateCar(@RequestBody Car newCar, @PathVariable("carId") int carId) {
         newCar.setId(carId);
-        try {
-            carService.updateCar(newCar);
-        } catch(Exception e) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, e.getMessage()
-            );
-        }
+        carService.updateCar(newCar);
     }
 
     @PatchMapping("/{carId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void updateCar(@RequestBody Map<String, String> carProperties, @PathVariable("carId") int carId) {
-        try {
-            carService.updateCar(carId, carProperties);
-        } catch(Exception e) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, e.getMessage()
-            );
-        }
+        carService.updateCar(carId, carProperties);
     }
 
     @PatchMapping("/{carId}/carName/{carName}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public void updateCarName(@PathVariable("carId") int carId, @PathVariable("carName") String carName) {
-        try {
-            carService.updateCarName(carId, carName);
-        } catch(Exception e) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, e.getMessage()
-            );
-        }
+        carService.updateCarName(carId, carName);
     }
 }
