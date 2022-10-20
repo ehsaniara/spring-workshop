@@ -9,10 +9,10 @@ import javax.persistence.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 @Entity
 @Table(name = "cars", schema = "inventory")
-public class CarEntity {
+public class CarEntity extends AuditModel{
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "car_jpa_sequence_generator")
     @SequenceGenerator(name = "car_jpa_sequence_generator", schema = "inventory", sequenceName = "car_id_seq", allocationSize = 1)

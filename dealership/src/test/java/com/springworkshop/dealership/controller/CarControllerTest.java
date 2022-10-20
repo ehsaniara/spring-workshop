@@ -1,7 +1,7 @@
 package com.springworkshop.dealership.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.springworkshop.dealership.domain.Car;
+import com.springworkshop.dealership.domain.CarDto;
 import com.springworkshop.dealership.domain.CarType;
 import com.springworkshop.dealership.handler.CarNotFoundException;
 import com.springworkshop.dealership.service.CarService;
@@ -33,7 +33,7 @@ class CarControllerTest {
 
     @Test
     void getCarTest_200() throws Exception {
-        Car tesla = Car.builder().name("Tesla").carType(CarType.NEW_CAR).id(1).build();
+        CarDto tesla = CarDto.builder().name("Tesla").carType(CarType.NEW_CAR).id(1).build();
         Mockito.when(carService.getCarById(Mockito.anyInt())).thenReturn(tesla);
         mockMvc.perform(MockMvcRequestBuilders.get("/cars/{carId}", 1))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -60,7 +60,7 @@ class CarControllerTest {
     @Test
     void createNewCarTest() throws Exception {
         ObjectMapper objMapper = new ObjectMapper();
-        Car tesla = Car.builder().carType(CarType.NEW_CAR).name("Tesla").build();
+        CarDto tesla = CarDto.builder().carType(CarType.NEW_CAR).name("Tesla").build();
         mockMvc.perform(MockMvcRequestBuilders.post("/cars")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objMapper.writeValueAsString(tesla)))
@@ -71,8 +71,8 @@ class CarControllerTest {
 
     @Test
     void getAllCars() throws Exception {
-        Car tesla = Car.builder().name("Tesla").carType(CarType.NEW_CAR).id(1).build();
-        Car ford = Car.builder().name("Ford").carType(CarType.NEW_CAR).id(2).build();
+        CarDto tesla = CarDto.builder().name("Tesla").carType(CarType.NEW_CAR).id(1).build();
+        CarDto ford = CarDto.builder().name("Ford").carType(CarType.NEW_CAR).id(2).build();
         Mockito.when(carService.getAllCars()).thenReturn(List.of(tesla, ford));
         mockMvc.perform(MockMvcRequestBuilders.get("/cars"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -91,9 +91,9 @@ class CarControllerTest {
     @Test
     void updateCar_202() throws Exception {
         ObjectMapper objMapper = new ObjectMapper();
-        Car teslaUsed = Car.builder().carType(CarType.USED_CAR).name("Tesla").build();
+        CarDto teslaUsed = CarDto.builder().carType(CarType.USED_CAR).name("Tesla").build();
         int carId = 1;
-        Car teslaExpected = Car.builder().carType(CarType.USED_CAR).id(carId).name("Tesla").build();
+        CarDto teslaExpected = CarDto.builder().carType(CarType.USED_CAR).id(carId).name("Tesla").build();
         mockMvc.perform(MockMvcRequestBuilders.put("/cars/{carId}", carId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objMapper.writeValueAsString(teslaUsed)))

@@ -1,6 +1,6 @@
 package com.springworkshop.dealership;
 
-import com.springworkshop.dealership.domain.Car;
+import com.springworkshop.dealership.domain.CarDto;
 import com.springworkshop.dealership.domain.CarType;
 import org.assertj.core.api.AssertionsForInterfaceTypes;
 import org.junit.jupiter.api.Assertions;
@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.testcontainers.shaded.com.trilead.ssh2.ChannelCondition.TIMEOUT;
 
 public class CarIntegrationTest extends IntegrationTestBaseClass {
     @Autowired
@@ -35,24 +34,24 @@ public class CarIntegrationTest extends IntegrationTestBaseClass {
     @Sql("/clean-up-cars.sql")
     public void getAllCarsTest_EmptyDb() {
         assertThat(postgres.isRunning()).isTrue();
-        ResponseEntity<List<Car>> response = restTemplate.exchange(createURLWithPort("/cars"),
+        ResponseEntity<List<CarDto>> response = restTemplate.exchange(createURLWithPort("/cars"),
                 HttpMethod.GET, null, new ParameterizedTypeReference<>() {
                 });
         Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
-        List<Car> cars = response.getBody();
-        AssertionsForInterfaceTypes.assertThat(cars).isNotNull();
-        AssertionsForInterfaceTypes.assertThat(cars).isEmpty();
+        List<CarDto> carDtos = response.getBody();
+        AssertionsForInterfaceTypes.assertThat(carDtos).isNotNull();
+        AssertionsForInterfaceTypes.assertThat(carDtos).isEmpty();
     }
 
     @Sql(scripts = {"/clean-up-cars.sql", "/cars.sql"})
     @ParameterizedTest
     @ValueSource(ints = {1, 2, 3, 4, 5})
     public void getCarTest_PreLoadDb(int carId) {
-        ResponseEntity<Car> response = restTemplate.exchange(createURLWithPort("/cars/" + carId),
-                HttpMethod.GET, null, Car.class);
+        ResponseEntity<CarDto> response = restTemplate.exchange(createURLWithPort("/cars/" + carId),
+                HttpMethod.GET, null, CarDto.class);
         Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
-        Car car = response.getBody();
-        assertThat(car).isNotNull();
+        CarDto carDto = response.getBody();
+        assertThat(carDto).isNotNull();
     }
 
     @Test
@@ -64,16 +63,16 @@ public class CarIntegrationTest extends IntegrationTestBaseClass {
         Assertions.assertEquals(
                 restTemplate.exchange(createURLWithPort("/cars"),
                         HttpMethod.POST,
-                        new HttpEntity<>(Car.builder()
+                        new HttpEntity<>(CarDto.builder()
                                 .carType(CarType.NEW_CAR)
                                 .name("Honda")
                                 .build(), headers), Void.class
                 ).getStatusCode(), HttpStatus.CREATED);
 
-        ResponseEntity<Car> response = restTemplate.exchange(createURLWithPort("/cars/1"),
-                HttpMethod.GET, null, Car.class);
+        ResponseEntity<CarDto> response = restTemplate.exchange(createURLWithPort("/cars/1"),
+                HttpMethod.GET, null, CarDto.class);
         Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
-        Car honda = response.getBody();
+        CarDto honda = response.getBody();
         assertThat(honda).isNotNull();
         assertThat(honda.getName()).isEqualTo("Honda");
     }
@@ -86,7 +85,7 @@ public class CarIntegrationTest extends IntegrationTestBaseClass {
 
         ResponseEntity<Void> updateResponse = restTemplate.exchange(createURLWithPort("/cars/1"),
                 HttpMethod.PUT,
-                new HttpEntity<>(Car.builder()
+                new HttpEntity<>(CarDto.builder()
                         .carType(CarType.NEW_CAR)
                         .name("Honda")
                         .build(), headers),
@@ -95,10 +94,10 @@ public class CarIntegrationTest extends IntegrationTestBaseClass {
         assertThat(updateResponse).isNotNull();
         assertThat(updateResponse.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 
-        ResponseEntity<Car> getResponse = restTemplate.exchange(createURLWithPort("/cars/1"),
-                HttpMethod.GET, null, Car.class);
+        ResponseEntity<CarDto> getResponse = restTemplate.exchange(createURLWithPort("/cars/1"),
+                HttpMethod.GET, null, CarDto.class);
         Assertions.assertEquals(getResponse.getStatusCode(), HttpStatus.OK);
-        Car honda = getResponse.getBody();
+        CarDto honda = getResponse.getBody();
         assertThat(honda).isNotNull();
         assertThat(honda.getName()).isEqualTo("Honda");
         assertThat(honda.getCarType()).isEqualTo(CarType.NEW_CAR);
@@ -115,10 +114,10 @@ public class CarIntegrationTest extends IntegrationTestBaseClass {
         assertThat(updateResponse).isNotNull();
         assertThat(updateResponse.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 
-        ResponseEntity<Car> getResponse = restTemplate.exchange(createURLWithPort("/cars/1"),
-                HttpMethod.GET, null, Car.class);
+        ResponseEntity<CarDto> getResponse = restTemplate.exchange(createURLWithPort("/cars/1"),
+                HttpMethod.GET, null, CarDto.class);
         Assertions.assertEquals(getResponse.getStatusCode(), HttpStatus.OK);
-        Car honda = getResponse.getBody();
+        CarDto honda = getResponse.getBody();
         assertThat(honda).isNotNull();
         assertThat(honda.getName()).isEqualTo("Toyota");
         assertThat(honda.getCarType()).isEqualTo(CarType.NEW_CAR);
@@ -138,10 +137,10 @@ public class CarIntegrationTest extends IntegrationTestBaseClass {
         assertThat(updateResponse).isNotNull();
         assertThat(updateResponse.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
 
-        ResponseEntity<Car> getResponse = restTemplate.exchange(createURLWithPort("/cars/1"),
-                HttpMethod.GET, null, Car.class);
+        ResponseEntity<CarDto> getResponse = restTemplate.exchange(createURLWithPort("/cars/1"),
+                HttpMethod.GET, null, CarDto.class);
         Assertions.assertEquals(getResponse.getStatusCode(), HttpStatus.OK);
-        Car honda = getResponse.getBody();
+        CarDto honda = getResponse.getBody();
         assertThat(honda).isNotNull();
         assertThat(honda.getName()).isEqualTo("Toyota");
         assertThat(honda.getCarType()).isEqualTo(CarType.NEW_CAR);

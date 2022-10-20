@@ -1,6 +1,6 @@
 package com.springworkshop.dealership.service;
 
-import com.springworkshop.dealership.domain.Car;
+import com.springworkshop.dealership.domain.CarDto;
 import com.springworkshop.dealership.domain.CarEntity;
 import com.springworkshop.dealership.domain.CarRepository;
 import com.springworkshop.dealership.domain.CarType;
@@ -23,7 +23,7 @@ public class CarService {
     private final CarMapper carMapper;
     private final List<Integer> carVisitors = Collections.synchronizedList(new ArrayList<>());
 
-    public Car getCarById(int carId) {
+    public CarDto getCarById(int carId) {
         log.debug("Card ID: {}", carId);
         CarEntity result = carRepository.findById(carId).orElseThrow(CarNotFoundException::new);
         carVisitors.add(carId);
@@ -34,14 +34,14 @@ public class CarService {
         return carVisitors.stream().filter(id -> id.equals(carId)).count();
     }
 
-    public void createCar(Car newCar) {
-        CarEntity carEntity = carMapper.toCarEntity(newCar);
+    public void createCar(CarDto newCarDto) {
+        CarEntity carEntity = carMapper.toCarEntity(newCarDto);
         carRepository.save(carEntity);
     }
 
-    public void updateCar(Car newCar) {
-        carRepository.findById(newCar.getId()).orElseThrow(CarNotFoundException::new);
-        carRepository.save(carMapper.toCarEntity(newCar));
+    public void updateCar(CarDto newCarDto) {
+        carRepository.findById(newCarDto.getId()).orElseThrow(CarNotFoundException::new);
+        carRepository.save(carMapper.toCarEntity(newCarDto));
     }
 
     public void updateCar(int id, Map<String, String> carProperties) {
@@ -65,7 +65,7 @@ public class CarService {
     }
 
 
-    public List<Car> getAllCars() {
+    public List<CarDto> getAllCars() {
         return carRepository
                 .findAll()
                 .stream()

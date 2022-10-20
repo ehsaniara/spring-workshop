@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class Car {
+public class CarDto {
     private Integer id;
     private String name;
     private CarType carType;

@@ -1,6 +1,6 @@
 package com.springworkshop.dealership.service;
 
-import com.springworkshop.dealership.domain.Car;
+import com.springworkshop.dealership.domain.CarDto;
 import com.springworkshop.dealership.domain.CarEntity;
 import com.springworkshop.dealership.domain.CarRepository;
 import com.springworkshop.dealership.domain.CarType;
@@ -25,9 +25,9 @@ class CarServiceTest {
     private final CarMapper carMapper = Mappers.getMapper(CarMapper.class);
     private final CarService carService = new CarService(carRepository, carMapper);
 
-    Car tesla = Car.builder().carType(CarType.NEW_CAR).id(1).name("Tesla").build();
+    CarDto tesla = CarDto.builder().carType(CarType.NEW_CAR).id(1).name("Tesla").build();
     CarEntity teslaEntity = CarEntity.builder().carType(CarType.NEW_CAR).id(1).name("Tesla").build();
-    Car ford = Car.builder().carType(CarType.NEW_CAR).id(2).name("Ford").build();
+    CarDto ford = CarDto.builder().carType(CarType.NEW_CAR).id(2).name("Ford").build();
     CarEntity fordEntity = CarEntity.builder().carType(CarType.NEW_CAR).id(2).name("Ford").build();
 
     @BeforeEach
@@ -94,13 +94,13 @@ class CarServiceTest {
 
     @Test
     void createNewCar() {
-        Car toyota = Car.builder().carType(CarType.NEW_CAR).name("Toyota").build();
+        CarDto toyota = CarDto.builder().carType(CarType.NEW_CAR).name("Toyota").build();
         carService.createCar(toyota);
         Mockito.verify(carRepository, Mockito.times(1)).save(Mockito.any());
     }
     @Test
     void updateCar() {
-        Car toyota = Car.builder().carType(CarType.NEW_CAR).name("Toyota").id(1).build();
+        CarDto toyota = CarDto.builder().carType(CarType.NEW_CAR).name("Toyota").id(1).build();
         CarEntity toyotaExpected = CarEntity.builder().carType(CarType.NEW_CAR).name("Toyota").id(1).build();
         carService.updateCar(toyota);
         Mockito.verify(carRepository, Mockito.times(1)).save(toyotaExpected);
@@ -124,11 +124,11 @@ class CarServiceTest {
     @Test
     void getAllCars() {
         List<CarEntity> expectedRepositoryCarList = List.of(teslaEntity, fordEntity);
-        List<Car> expectedCarList = List.of(tesla, ford);
+        List<CarDto> expectedCarListDto = List.of(tesla, ford);
         Mockito.when(carRepository.findAll()).thenReturn(expectedRepositoryCarList);
-        List<Car> actualCarList = carService.getAllCars();
+        List<CarDto> actualCarListDto = carService.getAllCars();
 
-        Assertions.assertEquals(expectedCarList, actualCarList);
+        Assertions.assertEquals(expectedCarListDto, actualCarListDto);
         Mockito.verify(carRepository, Mockito.times(1)).findAll();
     }
 }

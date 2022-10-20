@@ -1,6 +1,6 @@
 package com.springworkshop.dealership.mapper;
 
-import com.springworkshop.dealership.domain.Car;
+import com.springworkshop.dealership.domain.CarDto;
 import com.springworkshop.dealership.domain.CarEntity;
 import com.springworkshop.dealership.domain.CarType;
 import org.junit.jupiter.api.Test;
@@ -14,9 +14,9 @@ class CarMapperTest {
 
     @Test
     void toCarDtoTest() {
-        Car car = Car.builder().id(1).name("Tesla").carType(CarType.NEW_CAR).build();
+        CarDto carDto = CarDto.builder().id(1).name("Tesla").carType(CarType.NEW_CAR).build();
 
-        CarEntity teslaEntity = carMapper.toCarEntity(car);
+        CarEntity teslaEntity = carMapper.toCarEntity(carDto);
 
         assertThat(teslaEntity).isNotNull();
         assertThat(teslaEntity.getId()).isEqualTo(1);
@@ -28,7 +28,7 @@ class CarMapperTest {
     void toCarEntityTest() {
         CarEntity carEntity = CarEntity.builder().id(1).name("Tesla").carType(CarType.NEW_CAR).build();
 
-        Car tesla = carMapper.toCarDto(carEntity);
+        CarDto tesla = carMapper.toCarDto(carEntity);
 
         assertThat(tesla).isNotNull();
         assertThat(tesla.getId()).isEqualTo(1);
